@@ -9,15 +9,15 @@
 
 ## 📋 Overview
 
-This repository provides complete, reproducible code for validating the **24-month biological transition** in cancer recurrence using whole slide imaging (WSI) data from 2,871 TCGA patients across 9 cancer types.
+Complete, reproducible code for validating the **24-month biological transition** in cancer recurrence using WSI data from 2,871 TCGA patients across 9 cancer types.
 
-### What This Code Does
+### Features
 
-✅ **Cox Proportional Hazards Regression** - Proper survival analysis with censored data  
-✅ **Patient-Level Aggregation** - Ensures statistical independence  
-✅ **Multi-Cancer Validation** - Analyzes 9 TCGA cancer types (1,362 events)  
-✅ **Publication Figures** - Generates Kaplan-Meier curves and forest plots  
-✅ **Full Reproducibility** - Fixed random seeds, documented methods  
+✅ **Cox Proportional Hazards Regression** - Proper survival analysis  
+✅ **Patient-Level Aggregation** - Statistical independence  
+✅ **Multi-Cancer Validation** - 9 TCGA cancer types  
+✅ **Publication Figures** - Kaplan-Meier curves & forest plots  
+✅ **Full Reproducibility** - Fixed seeds, documented methods  
 
 ### Key Results
 
@@ -25,7 +25,7 @@ This repository provides complete, reproducible code for validating the **24-mon
 |--------|-------|
 | **Patients** | 2,871 |
 | **Events** | 1,362 |
-| **Hazard Ratio** | 56.48 (95% CI: 39.57-80.62) |
+| **HR** | 56.48 (95% CI: 39.57-80.62) |
 | **P-value** | <0.001 |
 | **C-index** | 0.76 |
 
@@ -33,24 +33,22 @@ This repository provides complete, reproducible code for validating the **24-mon
 
 ## 🚀 Quick Start
 
-### Installation
-
 ```bash
-# Clone repository
+# Clone & install
 git clone https://github.com/Sjtu-Fuxilab/COSMOS.git
 cd COSMOS
-
-# Install dependencies
 pip install -r requirements.txt
-```
 
-### Run Validation
-
-```bash
+# Run validation
 python full_validation.py \
     --data_dir /path/to/tcga \
     --cdr_file /path/to/TCGA-CDR.xlsx \
     --output_dir ./results
+
+# Generate figures
+python visualization.py \
+    --results_dir ./results \
+    --output_dir ./figures
 ```
 
 ---
@@ -59,56 +57,43 @@ python full_validation.py \
 
 ```
 COSMOS/
-├── README.md              # This file
-├── LICENSE                # MIT License
-├── requirements.txt       # Dependencies
-├── full_validation.py     # Main validation script
+├── README.md                # This file
+├── LICENSE                  # MIT License
+├── requirements.txt         # Dependencies
+├── full_validation.py       # Main validation
+├── visualization.py         # Figure generation
 └── docs/
-    ├── METHODS.md        # Detailed methodology
-    └── INSTALLATION.md   # Installation guide
+    ├── METHODS.md          # Methodology
+    └── INSTALLATION.md     # Installation
 ```
 
 ---
 
 ## 🔬 Methodology
 
-### Cox Proportional Hazards Regression
+Uses **gold-standard Cox proportional hazards regression**:
 
-This analysis uses **gold-standard survival analysis methods**:
-
-1. **Patient-Level Aggregation**: Multiple slides averaged per patient
-2. **Cox Regression**: Time-to-event analysis with censoring
-3. **24-Month Phase**: Binary predictor (early ≤24 vs late >24 months)
-4. **Metrics**: Hazard ratios, 95% CI, C-index, log-rank tests
+1. **Patient-Level Aggregation** - Multiple slides averaged
+2. **Cox Regression** - Time-to-event with censoring
+3. **24-Month Phase** - Binary predictor (≤24 vs >24 months)
+4. **Metrics** - HR, 95% CI, C-index, log-rank tests
 
 ---
 
-## 📊 Data Access
+## 📊 Data
 
-### TCGA Data (Public)
-
-**Whole Slide Images:**
-- Source: [NCI Genomic Data Commons](https://portal.gdc.cancer.gov)
-- Cancer types: BRCA, COAD, HNSC, KIRC, LIHC, LUAD, LUSC, STAD, UCEC
-
-**Clinical Data:**
-- Source: TCGA-CDR (Liu et al., Cell 2018)
-- DOI: [10.1016/j.cell.2018.02.052](https://doi.org/10.1016/j.cell.2018.02.052)
+**TCGA Data (Public):**
+- **WSI:** [GDC Portal](https://portal.gdc.cancer.gov)
+- **Clinical:** TCGA-CDR (Liu et al., Cell 2018)
+- **Cancer types:** BRCA, COAD, HNSC, KIRC, LIHC, LUAD, LUSC, STAD, UCEC
 
 ---
 
-## 💻 System Requirements
+## 💻 Requirements
 
-**Minimum:**
-- Python 3.9+
-- 16GB RAM
-- NVIDIA GPU with 6GB VRAM
-- 500GB storage
+**Minimum:** Python 3.9+, 16GB RAM, NVIDIA GPU (6GB)
 
-**Recommended:**
-- 32GB RAM
-- NVIDIA RTX 3090 (24GB)
-- 1TB SSD
+**Recommended:** 32GB RAM, RTX 3090 (24GB)
 
 ---
 
@@ -127,7 +112,7 @@ This analysis uses **gold-standard survival analysis methods**:
 
 ## 📝 License
 
-MIT License - see [LICENSE](LICENSE) file.
+MIT License - see [LICENSE](LICENSE)
 
 ---
 
