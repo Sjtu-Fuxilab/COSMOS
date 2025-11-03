@@ -96,12 +96,12 @@ def load_clinical_data(cdr_file, cancer_types):
     cdr = cdr[cdr['cancer_type'].isin(cancer_types)]
     cdr = cdr.dropna(subset=['time', 'status'])
 
-    print(f"✅ Loaded {len(cdr)} patients with survival data")
+    print(f"✅ Loaded {len(cdr)} patients")
     return cdr
 
 
 def scan_slides(data_dir, cancer_types):
-    print(f"\n📂 Scanning slide directories...")
+    print(f"\n📂 Scanning slides...")
     data_path = Path(data_dir)
     all_slides = []
 
@@ -176,7 +176,7 @@ def extract_patches_from_slide(slide_path, max_patches=300, patch_size=224):
 
         slide.close()
         return patches
-    except Exception as e:
+    except:
         return []
 
 
@@ -196,7 +196,7 @@ def extract_features_from_patches(patches, model, transform, device, batch_size=
 
 def process_cohort(slides_df, cdr_df, model, transform, device, max_patches, batch_size, output_dir):
     print(f"\n{'='*80}")
-    print("PROCESSING WHOLE SLIDE IMAGES")
+    print("PROCESSING WSI")
     print(f"{'='*80}")
 
     cohort_df = slides_df.merge(
@@ -204,8 +204,6 @@ def process_cohort(slides_df, cdr_df, model, transform, device, max_patches, bat
         on=['patient_id', 'cancer_type'],
         how='inner'
     )
-
-    print(f"\nCohort: {len(cohort_df)} slides, {cohort_df['patient_id'].nunique()} patients")
 
     processed_slides = []
     slide_embeddings = []
@@ -238,7 +236,6 @@ def process_cohort(slides_df, cdr_df, model, transform, device, max_patches, bat
     np.save(output_dir / "features" / "slide_embeddings.npy", embeddings_array)
     processed_df.to_csv(output_dir / "results" / "processed_slides.csv", index=False)
 
-    print(f"\n✅ Processed {len(processed_df)} slides")
     return processed_df, embeddings_array
 
 
@@ -260,22 +257,14 @@ def aggregate_to_patient_level(processed_df, embeddings_array):
     }).reset_index()
 
     patient_embeddings = patient_df[embedding_cols].values
-
-    print(f"\n✅ {len(patient_df)} patients, {patient_df['status'].sum()} events")
     return patient_df, patient_embeddings
 
 
 def perform_pca(patient_embeddings):
-    print(f"\n{'='*80}")
-    print("PCA")
-    print(f"{'='*80}")
-
     scaler = StandardScaler()
     embeddings_scaled = scaler.fit_transform(patient_embeddings)
     pca = PCA(n_components=10)
     pcs = pca.fit_transform(embeddings_scaled)
-
-    print(f"\n📈 PC1: {pca.explained_variance_ratio_[0]*100:.2f}%")
     return pcs, pca, scaler
 
 
@@ -289,7 +278,6 @@ def perform_cox_regression(patient_df, pcs):
 
     cox_data = patient_df[['patient_id', 'cancer_type', 'time', 'status', 'PC1', 'phase_early']].dropna()
 
-    print(f"\n🔬 Pan-Cancer Analysis...")
     cph = CoxPHFitter(penalizer=0.01)
     cph.fit(cox_data[['time', 'status', 'phase_early']], duration_col='time', event_col='status')
 
@@ -299,10 +287,7 @@ def perform_cox_regression(patient_df, pcs):
     ci_l = np.exp(cph.confidence_intervals_.iloc[0, 0])
     ci_u = np.exp(cph.confidence_intervals_.iloc[0, 1])
 
-    print(f"\n📊 Results:")
-    print(f"   HR: {hr:.2f} [{ci_l:.2f}-{ci_u:.2f}]")
-    print(f"   P: {p_val:.2e}")
-    print(f"   C-index: {c_index:.4f}")
+    print(f"\n📊 Pan-Cancer: HR={hr:.2f} [{ci_l:.2f}-{ci_u:.2f}], P={p_val:.2e}")
 
     cancer_results = []
     for ct in sorted(cox_data['cancer_type'].unique()):
@@ -348,7 +333,6 @@ def main():
     torch.manual_seed(args.random_seed)
 
     output_dir = setup_output_directories(args.output_dir)
-
     cancer_types = ['BRCA', 'LUAD', 'LUSC', 'KIRC', 'LIHC', 'STAD', 'COAD', 'HNSC', 'UCEC']
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -375,7 +359,7 @@ def main():
     joblib.dump(pca, output_dir / "features" / "pca_model.pkl")
     joblib.dump(scaler, output_dir / "features" / "scaler.pkl")
 
-    print(f"\n✅ Complete! Results in: {output_dir}")
+    print(f"\n✅ Complete!")
 
 
 if __name__ == "__main__":
