@@ -1,21 +1,7 @@
 
-"""
-================================================================================
+
 24-MONTH BIOLOGICAL TRANSITION: MULTI-CANCER WSI VALIDATION
 Cox Proportional Hazards Regression Analysis
-================================================================================
-
-Description:
-    Validates the 24-month biological transition in cancer recurrence using
-    whole slide imaging (WSI) data from TCGA. Uses proper Cox proportional
-    hazards regression with patient-level aggregation.
-
-Authors: Shanghai Jiao Tong University - Fuxilab
-Date: November 2025
-License: MIT
-Repository: https://github.com/Sjtu-Fuxilab/COSMOS
-================================================================================
-"""
 
 import os
 import sys
