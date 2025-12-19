@@ -1,21 +1,4 @@
 
-"""
-================================================================================
-24-MONTH BIOLOGICAL TRANSITION: VISUALIZATION CODE
-Generate Publication-Quality Figures
-================================================================================
-
-Description:
-    Generates Kaplan-Meier curves, forest plots, and summary tables for
-    multi-cancer validation results.
-
-Authors: Shanghai Jiao Tong University - Fuxilab
-Date: November 2025
-License: MIT
-Repository: https://github.com/Sjtu-Fuxilab/COSMOS
-================================================================================
-"""
-
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
